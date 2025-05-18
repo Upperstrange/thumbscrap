@@ -1,0 +1,746 @@
+2025-May-18 11:40:26.977998
+Starting deployment of Upperstrange/thumbscrap:main to localhost.
+2025-May-18 11:40:27.198858
+Preparing container with helper image: ghcr.io/coollabsio/coolify-helper:1.0.8.
+2025-May-18 11:40:27.331742
+[CMD]: docker stop --time=30 l8gogsgok8w0kog8w4ggsks4
+2025-May-18 11:40:27.331742
+Error response from daemon: No such container: l8gogsgok8w0kog8w4ggsks4
+2025-May-18 11:40:27.469150
+[CMD]: docker rm -f l8gogsgok8w0kog8w4ggsks4
+2025-May-18 11:40:27.469150
+Error response from daemon: No such container: l8gogsgok8w0kog8w4ggsks4
+2025-May-18 11:40:27.709473
+[CMD]: docker run -d --network coolify --name l8gogsgok8w0kog8w4ggsks4 --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/coollabsio/coolify-helper:1.0.8
+2025-May-18 11:40:27.709473
+bca8db1a4101b6290b9aac7f8334569f66130440a7c51352d86879282fbd5b07
+2025-May-18 11:40:28.973988
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git ls-remote https://github.com/Upperstrange/thumbscrap main'
+2025-May-18 11:40:28.973988
+b9b689527fff530fb40b7665cd3dbb3889e7e3a3	refs/heads/main
+2025-May-18 11:40:28.990928
+----------------------------------------
+2025-May-18 11:40:28.995565
+Importing Upperstrange/thumbscrap:main (commit sha HEAD) to /artifacts/l8gogsgok8w0kog8w4ggsks4.
+2025-May-18 11:40:29.204756
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'git clone -b "main" https://github.com/Upperstrange/thumbscrap /artifacts/l8gogsgok8w0kog8w4ggsks4 && cd /artifacts/l8gogsgok8w0kog8w4ggsks4 && sed -i "s#git@\(.*\):#https://\1/#g" /artifacts/l8gogsgok8w0kog8w4ggsks4/.gitmodules || true && cd /artifacts/l8gogsgok8w0kog8w4ggsks4 && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git submodule update --init --recursive && cd /artifacts/l8gogsgok8w0kog8w4ggsks4 && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git lfs pull'
+2025-May-18 11:40:29.204756
+Cloning into '/artifacts/l8gogsgok8w0kog8w4ggsks4'...
+2025-May-18 11:40:29.451418
+sed: /artifacts/l8gogsgok8w0kog8w4ggsks4/.gitmodules: No such file or directory
+2025-May-18 11:40:30.192008
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'cd /artifacts/l8gogsgok8w0kog8w4ggsks4 && git log -1 b9b689527fff530fb40b7665cd3dbb3889e7e3a3 --pretty=%B'
+2025-May-18 11:40:30.192008
+init
+2025-May-18 11:40:30.341888
+Image not found (m044s08cogcs4g8kkksok0kg:b9b689527fff530fb40b7665cd3dbb3889e7e3a3). Building new image.
+2025-May-18 11:40:31.468548
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'cat /artifacts/l8gogsgok8w0kog8w4ggsks4/Dockerfile'
+2025-May-18 11:40:31.468548
+# ---- Base Node ----
+2025-May-18 11:40:31.468548
+FROM node:18-slim AS base
+2025-May-18 11:40:31.468548
+ENV PNPM_HOME="/pnpm"
+2025-May-18 11:40:31.468548
+ENV PATH="$PNPM_HOME:$PATH"
+2025-May-18 11:40:31.468548
+RUN corepack enable
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# ---- Dependencies ----
+2025-May-18 11:40:31.468548
+FROM base AS deps
+2025-May-18 11:40:31.468548
+WORKDIR /usr/src/app
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# Install Playwright dependencies
+2025-May-18 11:40:31.468548
+# Reference: https://playwright.dev/docs/docker
+2025-May-18 11:40:31.468548
+# Note: You might only need dependencies for chromium if that's the only browser you use.
+2025-May-18 11:40:31.468548
+# For a smaller image, you can specify only chromium: RUN npx playwright install-deps chromium
+2025-May-18 11:40:31.468548
+RUN apt-get update && apt-get install -y --no-install-recommends \
+2025-May-18 11:40:31.468548
+libnss3 \
+2025-May-18 11:40:31.468548
+libnspr4 \
+2025-May-18 11:40:31.468548
+libdbus-glib-1-2 \
+2025-May-18 11:40:31.468548
+libatk1.0-0 \
+2025-May-18 11:40:31.468548
+libatk-bridge2.0-0 \
+2025-May-18 11:40:31.468548
+libcups2 \
+2025-May-18 11:40:31.468548
+libdrm2 \
+2025-May-18 11:40:31.468548
+libxkbcommon0 \
+2025-May-18 11:40:31.468548
+libxcomposite1 \
+2025-May-18 11:40:31.468548
+libxdamage1 \
+2025-May-18 11:40:31.468548
+libxfixes3 \
+2025-May-18 11:40:31.468548
+libxrandr2 \
+2025-May-18 11:40:31.468548
+libgbm1 \
+2025-May-18 11:40:31.468548
+libasound2 \
+2025-May-18 11:40:31.468548
+# Extra deps that might be needed for some environments or if using other browsers
+2025-May-18 11:40:31.468548
+# libpangocairo-1.0-0 \
+2025-May-18 11:40:31.468548
+# libpango-1.0-0 \
+2025-May-18 11:40:31.468548
+# libcairo2 \
+2025-May-18 11:40:31.468548
+# libx11-xcb1 \
+2025-May-18 11:40:31.468548
+# libxcursor1 \
+2025-May-18 11:40:31.468548
+# libxss1 \
+2025-May-18 11:40:31.468548
+# libxtst6 \
+2025-May-18 11:40:31.468548
+&& rm -rf /var/lib/apt/lists/*
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+COPY package.json pnpm-lock.yaml* ./
+2025-May-18 11:40:31.468548
+RUN pnpm install --prod --frozen-lockfile
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# ---- Build ----
+2025-May-18 11:40:31.468548
+# This stage is more relevant if you have a build step (e.g., TypeScript)
+2025-May-18 11:40:31.468548
+# For a simple JS app, it might be similar to the deps stage or could be skipped/merged.
+2025-May-18 11:40:31.468548
+FROM base AS build
+2025-May-18 11:40:31.468548
+WORKDIR /usr/src/app
+2025-May-18 11:40:31.468548
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+2025-May-18 11:40:31.468548
+COPY . .
+2025-May-18 11:40:31.468548
+# If you had a build command, it would go here, e.g.:
+2025-May-18 11:40:31.468548
+# RUN pnpm run build
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# ---- Runner ----
+2025-May-18 11:40:31.468548
+FROM base AS runner
+2025-May-18 11:40:31.468548
+WORKDIR /usr/src/app
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+ENV NODE_ENV production
+2025-May-18 11:40:31.468548
+# Set a default port, Coolify might override this with its own PORT environment variable
+2025-May-18 11:40:31.468548
+ENV PORT 3000
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+COPY --from=build /usr/src/app/node_modules ./node_modules
+2025-May-18 11:40:31.468548
+COPY --from=build /usr/src/app/package.json ./package.json
+2025-May-18 11:40:31.468548
+COPY --from=build /usr/src/app/index.js ./index.js
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# Download Playwright browsers. This ensures they are present in the final image.
+2025-May-18 11:40:31.468548
+# If you only use chromium, you can specify: RUN npx playwright install chromium
+2025-May-18 11:40:31.468548
+RUN npx playwright install --with-deps chromium
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# Expose the port the app runs on
+2025-May-18 11:40:31.468548
+EXPOSE ${PORT}
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+# Set user to non-root for security
+2025-May-18 11:40:31.468548
+USER node
+2025-May-18 11:40:31.468548
+2025-May-18 11:40:31.468548
+CMD [ "node", "index.js" ]
+2025-May-18 11:40:31.970748
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'cat /artifacts/l8gogsgok8w0kog8w4ggsks4/Dockerfile'
+2025-May-18 11:40:31.970748
+# ---- Base Node ----
+2025-May-18 11:40:31.970748
+FROM node:18-slim AS base
+2025-May-18 11:40:31.970748
+ENV PNPM_HOME="/pnpm"
+2025-May-18 11:40:31.970748
+ENV PATH="$PNPM_HOME:$PATH"
+2025-May-18 11:40:31.970748
+RUN corepack enable
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# ---- Dependencies ----
+2025-May-18 11:40:31.970748
+FROM base AS deps
+2025-May-18 11:40:31.970748
+WORKDIR /usr/src/app
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# Install Playwright dependencies
+2025-May-18 11:40:31.970748
+# Reference: https://playwright.dev/docs/docker
+2025-May-18 11:40:31.970748
+# Note: You might only need dependencies for chromium if that's the only browser you use.
+2025-May-18 11:40:31.970748
+# For a smaller image, you can specify only chromium: RUN npx playwright install-deps chromium
+2025-May-18 11:40:31.970748
+RUN apt-get update && apt-get install -y --no-install-recommends \
+2025-May-18 11:40:31.970748
+libnss3 \
+2025-May-18 11:40:31.970748
+libnspr4 \
+2025-May-18 11:40:31.970748
+libdbus-glib-1-2 \
+2025-May-18 11:40:31.970748
+libatk1.0-0 \
+2025-May-18 11:40:31.970748
+libatk-bridge2.0-0 \
+2025-May-18 11:40:31.970748
+libcups2 \
+2025-May-18 11:40:31.970748
+libdrm2 \
+2025-May-18 11:40:31.970748
+libxkbcommon0 \
+2025-May-18 11:40:31.970748
+libxcomposite1 \
+2025-May-18 11:40:31.970748
+libxdamage1 \
+2025-May-18 11:40:31.970748
+libxfixes3 \
+2025-May-18 11:40:31.970748
+libxrandr2 \
+2025-May-18 11:40:31.970748
+libgbm1 \
+2025-May-18 11:40:31.970748
+libasound2 \
+2025-May-18 11:40:31.970748
+# Extra deps that might be needed for some environments or if using other browsers
+2025-May-18 11:40:31.970748
+# libpangocairo-1.0-0 \
+2025-May-18 11:40:31.970748
+# libpango-1.0-0 \
+2025-May-18 11:40:31.970748
+# libcairo2 \
+2025-May-18 11:40:31.970748
+# libx11-xcb1 \
+2025-May-18 11:40:31.970748
+# libxcursor1 \
+2025-May-18 11:40:31.970748
+# libxss1 \
+2025-May-18 11:40:31.970748
+# libxtst6 \
+2025-May-18 11:40:31.970748
+&& rm -rf /var/lib/apt/lists/*
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+COPY package.json pnpm-lock.yaml* ./
+2025-May-18 11:40:31.970748
+RUN pnpm install --prod --frozen-lockfile
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# ---- Build ----
+2025-May-18 11:40:31.970748
+# This stage is more relevant if you have a build step (e.g., TypeScript)
+2025-May-18 11:40:31.970748
+# For a simple JS app, it might be similar to the deps stage or could be skipped/merged.
+2025-May-18 11:40:31.970748
+FROM base AS build
+2025-May-18 11:40:31.970748
+WORKDIR /usr/src/app
+2025-May-18 11:40:31.970748
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+2025-May-18 11:40:31.970748
+COPY . .
+2025-May-18 11:40:31.970748
+# If you had a build command, it would go here, e.g.:
+2025-May-18 11:40:31.970748
+# RUN pnpm run build
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# ---- Runner ----
+2025-May-18 11:40:31.970748
+FROM base AS runner
+2025-May-18 11:40:31.970748
+WORKDIR /usr/src/app
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+ENV NODE_ENV production
+2025-May-18 11:40:31.970748
+# Set a default port, Coolify might override this with its own PORT environment variable
+2025-May-18 11:40:31.970748
+ENV PORT 3000
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+COPY --from=build /usr/src/app/node_modules ./node_modules
+2025-May-18 11:40:31.970748
+COPY --from=build /usr/src/app/package.json ./package.json
+2025-May-18 11:40:31.970748
+COPY --from=build /usr/src/app/index.js ./index.js
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# Download Playwright browsers. This ensures they are present in the final image.
+2025-May-18 11:40:31.970748
+# If you only use chromium, you can specify: RUN npx playwright install chromium
+2025-May-18 11:40:31.970748
+RUN npx playwright install --with-deps chromium
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# Expose the port the app runs on
+2025-May-18 11:40:31.970748
+EXPOSE ${PORT}
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+# Set user to non-root for security
+2025-May-18 11:40:31.970748
+USER node
+2025-May-18 11:40:31.970748
+2025-May-18 11:40:31.970748
+CMD [ "node", "index.js" ]
+2025-May-18 11:40:32.209390
+----------------------------------------
+2025-May-18 11:40:32.215191
+Building docker image started.
+2025-May-18 11:40:32.219974
+To check the current progress, click on Show Debug Logs.
+2025-May-18 11:40:32.652103
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'cat /artifacts/build.sh'
+2025-May-18 11:40:32.652103
+docker build  --add-host coolify:10.0.1.5 --add-host coolify-db:10.0.1.2 --add-host coolify-realtime:10.0.1.4 --add-host coolify-redis:10.0.1.3 --add-host r0w4cco4ckk8o4cc4kwswkk0:10.0.1.7 --network host -f /artifacts/l8gogsgok8w0kog8w4ggsks4/Dockerfile --build-arg SOURCE_COMMIT='b9b689527fff530fb40b7665cd3dbb3889e7e3a3' --build-arg 'COOLIFY_URL=http://m044s08cogcs4g8kkksok0kg.34.134.150.213.sslip.io' --build-arg 'COOLIFY_FQDN=m044s08cogcs4g8kkksok0kg.34.134.150.213.sslip.io' --build-arg 'COOLIFY_BRANCH=main' --build-arg 'COOLIFY_RESOURCE_UUID=m044s08cogcs4g8kkksok0kg' --build-arg 'COOLIFY_CONTAINER_NAME=m044s08cogcs4g8kkksok0kg-114024990390' --progress plain -t m044s08cogcs4g8kkksok0kg:b9b689527fff530fb40b7665cd3dbb3889e7e3a3 /artifacts/l8gogsgok8w0kog8w4ggsks4
+2025-May-18 11:40:34.025389
+[CMD]: docker exec l8gogsgok8w0kog8w4ggsks4 bash -c 'bash /artifacts/build.sh'
+2025-May-18 11:40:34.025389
+#0 building with "default" instance using docker driver
+2025-May-18 11:40:34.025389
+2025-May-18 11:40:34.025389
+#1 [internal] load build definition from Dockerfile
+2025-May-18 11:40:34.025389
+#1 transferring dockerfile: 2.21kB done
+2025-May-18 11:40:34.025389
+#1 DONE 0.0s
+2025-May-18 11:40:34.025389
+2025-May-18 11:40:34.025389
+#2 [internal] load metadata for docker.io/library/node:18-slim
+2025-May-18 11:40:34.654795
+#2 DONE 0.8s
+2025-May-18 11:40:34.758936
+#3 [internal] load .dockerignore
+2025-May-18 11:40:34.758936
+#3 transferring context: 185B done
+2025-May-18 11:40:34.758936
+#3 DONE 0.0s
+2025-May-18 11:40:34.937107
+#4 [internal] load build context
+2025-May-18 11:40:34.937107
+#4 transferring context: 46.66kB 0.0s done
+2025-May-18 11:40:34.937107
+#4 DONE 0.1s
+2025-May-18 11:40:34.937107
+2025-May-18 11:40:34.937107
+#5 [base 1/2] FROM docker.io/library/node:18-slim@sha256:52cbfd66512d9cec0e7faad8366466434b69d3b96e805282f959b414e59bb91d
+2025-May-18 11:40:34.937107
+#5 resolve docker.io/library/node:18-slim@sha256:52cbfd66512d9cec0e7faad8366466434b69d3b96e805282f959b414e59bb91d 0.0s done
+2025-May-18 11:40:34.937107
+#5 sha256:52cbfd66512d9cec0e7faad8366466434b69d3b96e805282f959b414e59bb91d 6.49kB / 6.49kB done
+2025-May-18 11:40:34.937107
+#5 sha256:51e5dc8c502c4d30ed4fcecc2f6db97a556edaed148efff75ad1dc1e1c47902e 1.93kB / 1.93kB done
+2025-May-18 11:40:34.937107
+#5 sha256:fc665eaf5031ed6867637974524ab21a8ab290d2a7720715c8e7a3ad151dc9c2 6.54kB / 6.54kB done
+2025-May-18 11:40:35.140201
+#5 sha256:bc8f78f7c89632c8a6ef8da49b089456c8c6dcdeb083f2707eb28fa22504b9a8 0B / 446B 0.3s
+2025-May-18 11:40:35.140201
+#5 sha256:d46333ed8772648d9202b3df6046828e553e58a703b033e118493528fb0f3ed3 3.31kB / 3.31kB 0.3s done
+2025-May-18 11:40:35.140201
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 0B / 38.25MB 0.3s
+2025-May-18 11:40:35.140201
+#5 sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9 0B / 1.71MB 0.3s
+2025-May-18 11:40:35.336298
+#5 sha256:bc8f78f7c89632c8a6ef8da49b089456c8c6dcdeb083f2707eb28fa22504b9a8 446B / 446B 0.4s done
+2025-May-18 11:40:35.336298
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 10.49MB / 38.25MB 0.5s
+2025-May-18 11:40:35.336298
+#5 sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9 1.71MB / 1.71MB 0.5s done
+2025-May-18 11:40:35.336298
+#5 extracting sha256:d46333ed8772648d9202b3df6046828e553e58a703b033e118493528fb0f3ed3 0.1s done
+2025-May-18 11:40:35.469848
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 26.21MB / 38.25MB 0.6s
+2025-May-18 11:40:35.636419
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 38.25MB / 38.25MB 0.8s
+2025-May-18 11:40:35.841136
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 38.25MB / 38.25MB 0.9s done
+2025-May-18 11:40:35.841136
+#5 extracting sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5
+2025-May-18 11:40:38.997223
+#5 extracting sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 3.0s done
+2025-May-18 11:40:39.079347
+#5 extracting sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9
+2025-May-18 11:40:39.454232
+#5 extracting sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9 0.2s done
+2025-May-18 11:40:39.454232
+#5 extracting sha256:bc8f78f7c89632c8a6ef8da49b089456c8c6dcdeb083f2707eb28fa22504b9a8 done
+2025-May-18 11:40:39.454232
+#5 DONE 4.7s
+2025-May-18 11:40:39.454232
+2025-May-18 11:40:39.454232
+#6 [base 2/2] RUN corepack enable
+2025-May-18 11:40:42.575653
+#6 DONE 3.1s
+2025-May-18 11:40:42.729764
+#7 [deps 1/4] WORKDIR /usr/src/app
+2025-May-18 11:40:42.755429
+#7 DONE 0.2s
+2025-May-18 11:40:42.912653
+#8 [deps 2/4] RUN apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*
+2025-May-18 11:40:44.208936
+#8 1.447 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+2025-May-18 11:40:44.339170
+#8 1.483 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+2025-May-18 11:40:44.339170
+#8 1.495 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+2025-May-18 11:40:44.339170
+#8 1.578 Err:1 http://deb.debian.org/debian bookworm InRelease
+2025-May-18 11:40:44.339170
+#8 1.578   At least one invalid signature was encountered.
+2025-May-18 11:40:44.462426
+#8 1.639 Err:2 http://deb.debian.org/debian bookworm-updates InRelease
+2025-May-18 11:40:44.462426
+#8 1.639   At least one invalid signature was encountered.
+2025-May-18 11:40:44.462426
+#8 1.701 Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+2025-May-18 11:40:44.462426
+#8 1.701   At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+#8 1.731 Reading package lists...
+2025-May-18 11:40:44.570721
+#8 1.743 W: GPG error: http://deb.debian.org/debian bookworm InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+#8 1.743 E: The repository 'http://deb.debian.org/debian bookworm InRelease' is not signed.
+2025-May-18 11:40:44.570721
+#8 1.743 W: GPG error: http://deb.debian.org/debian bookworm-updates InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+#8 1.743 E: The repository 'http://deb.debian.org/debian bookworm-updates InRelease' is not signed.
+2025-May-18 11:40:44.570721
+#8 1.743 W: GPG error: http://deb.debian.org/debian-security bookworm-security InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+#8 1.743 E: The repository 'http://deb.debian.org/debian-security bookworm-security InRelease' is not signed.
+2025-May-18 11:40:44.570721
+#8 ERROR: process "/bin/sh -c apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+2025-May-18 11:40:44.570721
+------
+2025-May-18 11:40:44.570721
+> [deps 2/4] RUN apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*:
+2025-May-18 11:40:44.570721
+1.639   At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+1.701 Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+2025-May-18 11:40:44.570721
+1.701   At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+1.731 Reading package lists...
+2025-May-18 11:40:44.570721
+1.743 W: GPG error: http://deb.debian.org/debian bookworm InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+1.743 E: The repository 'http://deb.debian.org/debian bookworm InRelease' is not signed.
+2025-May-18 11:40:44.570721
+1.743 W: GPG error: http://deb.debian.org/debian bookworm-updates InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+1.743 E: The repository 'http://deb.debian.org/debian bookworm-updates InRelease' is not signed.
+2025-May-18 11:40:44.570721
+1.743 W: GPG error: http://deb.debian.org/debian-security bookworm-security InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.570721
+1.743 E: The repository 'http://deb.debian.org/debian-security bookworm-security InRelease' is not signed.
+2025-May-18 11:40:44.570721
+------
+2025-May-18 11:40:44.577110
+Dockerfile:15
+2025-May-18 11:40:44.577110
+--------------------
+2025-May-18 11:40:44.577110
+14 |     # For a smaller image, you can specify only chromium: RUN npx playwright install-deps chromium
+2025-May-18 11:40:44.577110
+15 | >>> RUN apt-get update && apt-get install -y --no-install-recommends \
+2025-May-18 11:40:44.577110
+16 | >>>     libnss3 \
+2025-May-18 11:40:44.577110
+17 | >>>     libnspr4 \
+2025-May-18 11:40:44.577110
+18 | >>>     libdbus-glib-1-2 \
+2025-May-18 11:40:44.577110
+19 | >>>     libatk1.0-0 \
+2025-May-18 11:40:44.577110
+20 | >>>     libatk-bridge2.0-0 \
+2025-May-18 11:40:44.577110
+21 | >>>     libcups2 \
+2025-May-18 11:40:44.577110
+22 | >>>     libdrm2 \
+2025-May-18 11:40:44.577110
+23 | >>>     libxkbcommon0 \
+2025-May-18 11:40:44.577110
+24 | >>>     libxcomposite1 \
+2025-May-18 11:40:44.577110
+25 | >>>     libxdamage1 \
+2025-May-18 11:40:44.577110
+26 | >>>     libxfixes3 \
+2025-May-18 11:40:44.577110
+27 | >>>     libxrandr2 \
+2025-May-18 11:40:44.577110
+28 | >>>     libgbm1 \
+2025-May-18 11:40:44.577110
+29 | >>>     libasound2 \
+2025-May-18 11:40:44.577110
+30 | >>>     # Extra deps that might be needed for some environments or if using other browsers
+2025-May-18 11:40:44.577110
+31 | >>>     # libpangocairo-1.0-0 \
+2025-May-18 11:40:44.577110
+32 | >>>     # libpango-1.0-0 \
+2025-May-18 11:40:44.577110
+33 | >>>     # libcairo2 \
+2025-May-18 11:40:44.577110
+34 | >>>     # libx11-xcb1 \
+2025-May-18 11:40:44.577110
+35 | >>>     # libxcursor1 \
+2025-May-18 11:40:44.577110
+36 | >>>     # libxss1 \
+2025-May-18 11:40:44.577110
+37 | >>>     # libxtst6 \
+2025-May-18 11:40:44.577110
+38 | >>>     && rm -rf /var/lib/apt/lists/*
+2025-May-18 11:40:44.577110
+39 |
+2025-May-18 11:40:44.577110
+--------------------
+2025-May-18 11:40:44.577110
+ERROR: failed to solve: process "/bin/sh -c apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+2025-May-18 11:40:44.582850
+exit status 1
+2025-May-18 11:40:44.621758
+Oops something is not okay, are you okay? 😢
+2025-May-18 11:40:44.629762
+#0 building with "default" instance using docker driver
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#1 [internal] load build definition from Dockerfile
+2025-May-18 11:40:44.629762
+#1 transferring dockerfile: 2.21kB done
+2025-May-18 11:40:44.629762
+#1 DONE 0.0s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#2 [internal] load metadata for docker.io/library/node:18-slim
+2025-May-18 11:40:44.629762
+#2 DONE 0.8s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#3 [internal] load .dockerignore
+2025-May-18 11:40:44.629762
+#3 transferring context: 185B done
+2025-May-18 11:40:44.629762
+#3 DONE 0.0s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#4 [internal] load build context
+2025-May-18 11:40:44.629762
+#4 transferring context: 46.66kB 0.0s done
+2025-May-18 11:40:44.629762
+#4 DONE 0.1s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#5 [base 1/2] FROM docker.io/library/node:18-slim@sha256:52cbfd66512d9cec0e7faad8366466434b69d3b96e805282f959b414e59bb91d
+2025-May-18 11:40:44.629762
+#5 resolve docker.io/library/node:18-slim@sha256:52cbfd66512d9cec0e7faad8366466434b69d3b96e805282f959b414e59bb91d 0.0s done
+2025-May-18 11:40:44.629762
+#5 sha256:52cbfd66512d9cec0e7faad8366466434b69d3b96e805282f959b414e59bb91d 6.49kB / 6.49kB done
+2025-May-18 11:40:44.629762
+#5 sha256:51e5dc8c502c4d30ed4fcecc2f6db97a556edaed148efff75ad1dc1e1c47902e 1.93kB / 1.93kB done
+2025-May-18 11:40:44.629762
+#5 sha256:fc665eaf5031ed6867637974524ab21a8ab290d2a7720715c8e7a3ad151dc9c2 6.54kB / 6.54kB done
+2025-May-18 11:40:44.629762
+#5 sha256:bc8f78f7c89632c8a6ef8da49b089456c8c6dcdeb083f2707eb28fa22504b9a8 0B / 446B 0.3s
+2025-May-18 11:40:44.629762
+#5 sha256:d46333ed8772648d9202b3df6046828e553e58a703b033e118493528fb0f3ed3 3.31kB / 3.31kB 0.3s done
+2025-May-18 11:40:44.629762
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 0B / 38.25MB 0.3s
+2025-May-18 11:40:44.629762
+#5 sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9 0B / 1.71MB 0.3s
+2025-May-18 11:40:44.629762
+#5 sha256:bc8f78f7c89632c8a6ef8da49b089456c8c6dcdeb083f2707eb28fa22504b9a8 446B / 446B 0.4s done
+2025-May-18 11:40:44.629762
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 10.49MB / 38.25MB 0.5s
+2025-May-18 11:40:44.629762
+#5 sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9 1.71MB / 1.71MB 0.5s done
+2025-May-18 11:40:44.629762
+#5 extracting sha256:d46333ed8772648d9202b3df6046828e553e58a703b033e118493528fb0f3ed3 0.1s done
+2025-May-18 11:40:44.629762
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 26.21MB / 38.25MB 0.6s
+2025-May-18 11:40:44.629762
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 38.25MB / 38.25MB 0.8s
+2025-May-18 11:40:44.629762
+#5 sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 38.25MB / 38.25MB 0.9s done
+2025-May-18 11:40:44.629762
+#5 extracting sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5
+2025-May-18 11:40:44.629762
+#5 extracting sha256:92f2da1f8acf52395c1a0bc339ecb4978a9ac62165ec9d68d1511083591745f5 3.0s done
+2025-May-18 11:40:44.629762
+#5 extracting sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9
+2025-May-18 11:40:44.629762
+#5 extracting sha256:35cd64e8002a29bb5bec75e68b600449f25f6bc76429509b14a195b2b2432bf9 0.2s done
+2025-May-18 11:40:44.629762
+#5 extracting sha256:bc8f78f7c89632c8a6ef8da49b089456c8c6dcdeb083f2707eb28fa22504b9a8 done
+2025-May-18 11:40:44.629762
+#5 DONE 4.7s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#6 [base 2/2] RUN corepack enable
+2025-May-18 11:40:44.629762
+#6 DONE 3.1s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#7 [deps 1/4] WORKDIR /usr/src/app
+2025-May-18 11:40:44.629762
+#7 DONE 0.2s
+2025-May-18 11:40:44.629762
+2025-May-18 11:40:44.629762
+#8 [deps 2/4] RUN apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*
+2025-May-18 11:40:44.629762
+#8 1.447 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+2025-May-18 11:40:44.629762
+#8 1.483 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+2025-May-18 11:40:44.629762
+#8 1.495 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+2025-May-18 11:40:44.629762
+#8 1.578 Err:1 http://deb.debian.org/debian bookworm InRelease
+2025-May-18 11:40:44.629762
+#8 1.578   At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+#8 1.639 Err:2 http://deb.debian.org/debian bookworm-updates InRelease
+2025-May-18 11:40:44.629762
+#8 1.639   At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+#8 1.701 Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+2025-May-18 11:40:44.629762
+#8 1.701   At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+#8 1.731 Reading package lists...
+2025-May-18 11:40:44.629762
+#8 1.743 W: GPG error: http://deb.debian.org/debian bookworm InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+#8 1.743 E: The repository 'http://deb.debian.org/debian bookworm InRelease' is not signed.
+2025-May-18 11:40:44.629762
+#8 1.743 W: GPG error: http://deb.debian.org/debian bookworm-updates InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+#8 1.743 E: The repository 'http://deb.debian.org/debian bookworm-updates InRelease' is not signed.
+2025-May-18 11:40:44.629762
+#8 1.743 W: GPG error: http://deb.debian.org/debian-security bookworm-security InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+#8 1.743 E: The repository 'http://deb.debian.org/debian-security bookworm-security InRelease' is not signed.
+2025-May-18 11:40:44.629762
+#8 ERROR: process "/bin/sh -c apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+2025-May-18 11:40:44.629762
+------
+2025-May-18 11:40:44.629762
+> [deps 2/4] RUN apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*:
+2025-May-18 11:40:44.629762
+1.639   At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+1.701 Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+2025-May-18 11:40:44.629762
+1.701   At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+1.731 Reading package lists...
+2025-May-18 11:40:44.629762
+1.743 W: GPG error: http://deb.debian.org/debian bookworm InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+1.743 E: The repository 'http://deb.debian.org/debian bookworm InRelease' is not signed.
+2025-May-18 11:40:44.629762
+1.743 W: GPG error: http://deb.debian.org/debian bookworm-updates InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+1.743 E: The repository 'http://deb.debian.org/debian bookworm-updates InRelease' is not signed.
+2025-May-18 11:40:44.629762
+1.743 W: GPG error: http://deb.debian.org/debian-security bookworm-security InRelease: At least one invalid signature was encountered.
+2025-May-18 11:40:44.629762
+1.743 E: The repository 'http://deb.debian.org/debian-security bookworm-security InRelease' is not signed.
+2025-May-18 11:40:44.629762
+------
+2025-May-18 11:40:44.629762
+Dockerfile:15
+2025-May-18 11:40:44.629762
+--------------------
+2025-May-18 11:40:44.629762
+14 |     # For a smaller image, you can specify only chromium: RUN npx playwright install-deps chromium
+2025-May-18 11:40:44.629762
+15 | >>> RUN apt-get update && apt-get install -y --no-install-recommends \
+2025-May-18 11:40:44.629762
+16 | >>>     libnss3 \
+2025-May-18 11:40:44.629762
+17 | >>>     libnspr4 \
+2025-May-18 11:40:44.629762
+18 | >>>     libdbus-glib-1-2 \
+2025-May-18 11:40:44.629762
+19 | >>>     libatk1.0-0 \
+2025-May-18 11:40:44.629762
+20 | >>>     libatk-bridge2.0-0 \
+2025-May-18 11:40:44.629762
+21 | >>>     libcups2 \
+2025-May-18 11:40:44.629762
+22 | >>>     libdrm2 \
+2025-May-18 11:40:44.629762
+23 | >>>     libxkbcommon0 \
+2025-May-18 11:40:44.629762
+24 | >>>     libxcomposite1 \
+2025-May-18 11:40:44.629762
+25 | >>>     libxdamage1 \
+2025-May-18 11:40:44.629762
+26 | >>>     libxfixes3 \
+2025-May-18 11:40:44.629762
+27 | >>>     libxrandr2 \
+2025-May-18 11:40:44.629762
+28 | >>>     libgbm1 \
+2025-May-18 11:40:44.629762
+29 | >>>     libasound2 \
+2025-May-18 11:40:44.629762
+30 | >>>     # Extra deps that might be needed for some environments or if using other browsers
+2025-May-18 11:40:44.629762
+31 | >>>     # libpangocairo-1.0-0 \
+2025-May-18 11:40:44.629762
+32 | >>>     # libpango-1.0-0 \
+2025-May-18 11:40:44.629762
+33 | >>>     # libcairo2 \
+2025-May-18 11:40:44.629762
+34 | >>>     # libx11-xcb1 \
+2025-May-18 11:40:44.629762
+35 | >>>     # libxcursor1 \
+2025-May-18 11:40:44.629762
+36 | >>>     # libxss1 \
+2025-May-18 11:40:44.629762
+37 | >>>     # libxtst6 \
+2025-May-18 11:40:44.629762
+38 | >>>     && rm -rf /var/lib/apt/lists/*
+2025-May-18 11:40:44.629762
+39 |
+2025-May-18 11:40:44.629762
+--------------------
+2025-May-18 11:40:44.629762
+ERROR: failed to solve: process "/bin/sh -c apt-get update && apt-get install -y --no-install-recommends     libnss3     libnspr4     libdbus-glib-1-2     libatk1.0-0     libatk-bridge2.0-0     libcups2     libdrm2     libxkbcommon0     libxcomposite1     libxdamage1     libxfixes3     libxrandr2     libgbm1     libasound2     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+2025-May-18 11:40:44.629762
+exit status 1
+2025-May-18 11:40:44.636442
+Deployment failed. Removing the new version of your application.

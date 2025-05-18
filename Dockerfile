@@ -12,7 +12,10 @@ WORKDIR /usr/src/app
 # Reference: https://playwright.dev/docs/docker
 # Note: You might only need dependencies for chromium if that's the only browser you use.
 # For a smaller image, you can specify only chromium: RUN npx playwright install-deps chromium
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates gnupg debian-archive-keyring && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
     libnss3 \
     libnspr4 \
     libdbus-glib-1-2 \
